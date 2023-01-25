@@ -1,8 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
-import contactsReducer from './slices/contacts';
+import {configureStore} from '@reduxjs/toolkit';
+import generalBroadcast from './slices/generalBroadcast';
 
 export default configureStore({
     reducer: {
-        contacts: contactsReducer
+        generalBroadcast: generalBroadcast
     }
 });

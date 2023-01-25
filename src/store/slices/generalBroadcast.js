@@ -1,11 +1,12 @@
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import {API_BASE_URL} from '../../utils/API_CONFIG';
 
 export const fetchTodos = createAsyncThunk(
     'todos/fetchTodos',
     async function (_, {rejectWithValue}) {
 
         try {
-            const response = await fetch('https://jsonplaceholder.typicode.com/todos');
+            const response = await fetch(`${API_BASE_URL}data/2.5/weather?lat=33.44&lon=-94.04&appid=ba63aad5cef0cee38d4091641a095fbe`);
             const data = await response.json();
             return data
         } catch (error) {
@@ -14,15 +15,15 @@ export const fetchTodos = createAsyncThunk(
     },
     {
         condition: (_, {getState}) => {
-            const {contacts} = getState();
-            if (contacts.status === 'loading') return false;
+            const {generalBroadcast} = getState();
+            if (generalBroadcast.status === 'loading') return false;
         }
     }
 )
 
 
-export const contactsSlice = createSlice({
-    name: 'contacts',
+export const generalBroadcastSlice = createSlice({
+    name: 'generalBroadcast',
 
     initialState: {
         todos: [],
@@ -31,25 +32,16 @@ export const contactsSlice = createSlice({
     },
 
 
-    // reducers: {
-    //     addContact: (state, action) => {
-    //         state.push(action.payload);
-    //     },
-    // },
-
     extraReducers: builder => {
-        // console.log(builder)
         builder
             .addCase(fetchTodos.pending, (state) => {
                 state.status = 'loading'
             })
 
-
             .addCase(fetchTodos.fulfilled, (state, action) => {
                 state.status = 'resolved';
                 state.todos = action.payload;
             })
-
 
             .addCase(fetchTodos.rejected, (state, action) => {
                 state.status = 'rejected';
@@ -57,11 +49,10 @@ export const contactsSlice = createSlice({
             })
     }
 
-
 });
 
 // export const {
 //     addContact,
 //
 // } = contactsSlice.actions;
-export default contactsSlice.reducer;
+export default generalBroadcastSlice.reducer;
