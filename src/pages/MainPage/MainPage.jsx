@@ -4,11 +4,13 @@ import {Col, Row} from "react-bootstrap";
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import BroadcastCard from '../../components/BroadcastCard/BroadcastCard';
-import {fetchBroadcast, fetchCitiesGeoposition} from "../../store/slices/generalBroadcast";
+import {fetchCitiesGeoposition} from '../../store/slices/cities';
+import {fetchBroadcast} from "../../store/slices/generalBroadcast";
 
 const MainPage = () => {
     const dispatch = useDispatch();
-    const {broadcasts, citiesGeopositions} = useSelector(state => state.generalBroadcast);
+    const {broadcasts} = useSelector(state => state.broadcasts);
+    const {citiesGeopositions} = useSelector(state => state.cities);
     // console.log(citiesGeopositions)
     // console.log(broadcasts)
 
@@ -17,10 +19,8 @@ const MainPage = () => {
 
     useEffect(() => {
         if (!citiesGeopositions.length) return;
-        dispatch(fetchBroadcast())
+        dispatch(fetchBroadcast(citiesGeopositions))
     }, [dispatch, citiesGeopositions])
-
-
 
 
     const setCity = ({target}) => {
@@ -54,10 +54,10 @@ const MainPage = () => {
 
             <Row>
 
-                {broadcasts.map((item, index) => (
+                {broadcasts.map((broadcast, index) => (
                     <BroadcastCard
                         key={index}
-                        broadcastData={item}
+                        broadcast={broadcast}
                     />
                 ))}
 
