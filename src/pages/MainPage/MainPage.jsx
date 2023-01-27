@@ -1,33 +1,37 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {fetchTodos} from "../../store/slices/generalBroadcast";
 import {Col, Row} from "react-bootstrap";
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import BroadcastCard from '../../components/BroadcastCard/BroadcastCard';
+import {fetchBroadcast, fetchCitiesGeoposition} from "../../store/slices/generalBroadcast";
 
 const MainPage = () => {
     const dispatch = useDispatch();
-    const {status, error, todos} = useSelector(state => state.generalBroadcast);
+    const {broadcasts, citiesGeopositions} = useSelector(state => state.generalBroadcast);
+    // console.log(citiesGeopositions)
+    // console.log(broadcasts)
 
     const [currentCity, setCurrentCity] = useState('');
-    console.log(currentCity)
-
-    // useEffect(() => {
-    //     dispatch(fetchTodos())
-    // }, [dispatch])
-    //
-    // console.log(todos)
 
 
-    const setCity = (event) => {
-        setCurrentCity(event.target.value);
+    useEffect(() => {
+        if (!citiesGeopositions.length) return;
+        dispatch(fetchBroadcast())
+    }, [dispatch, citiesGeopositions])
+
+
+
+
+    const setCity = ({target}) => {
+        setCurrentCity(target.value);
+
     }
 
     const searchHandle = (event) => {
         event.preventDefault();
 
-
+        dispatch(fetchCitiesGeoposition(currentCity));
         setCurrentCity('');
     }
 
@@ -49,7 +53,14 @@ const MainPage = () => {
 
 
             <Row>
-                <BroadcastCard/>
+
+                {broadcasts.map((item, index) => (
+                    <BroadcastCard
+                        key={index}
+                        broadcastData={item}
+                    />
+                ))}
+
             </Row>
         </main>
     );

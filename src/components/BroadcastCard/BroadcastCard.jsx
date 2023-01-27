@@ -3,11 +3,16 @@ import {Col} from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 
-const BroadcastCard = () => {
+
+const BroadcastCard = (props) => {
+    const {broadcastData} = props;
+    console.log(broadcastData)
+
+
     return (
         <Col sm={8} md={6} lg={4} className='mb-4 mx-auto m-md-0'>
             <Card>
-                <Card.Header>Featured</Card.Header>
+                <Card.Header>{broadcastData.name}, {broadcastData.sys.country}</Card.Header>
                 <Card.Body>
                     <Card.Title>Special title treatment</Card.Title>
                     <Card.Text>

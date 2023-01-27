@@ -1,8 +1,10 @@
 import {configureStore} from '@reduxjs/toolkit';
 import generalBroadcast from './slices/generalBroadcast';
+import cities from "./slices/cities";
 
 export default configureStore({
     reducer: {
-        generalBroadcast: generalBroadcast
+        generalBroadcast: generalBroadcast,
+        cities: cities
     }
 });
