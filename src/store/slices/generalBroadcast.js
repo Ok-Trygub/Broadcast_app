@@ -1,19 +1,19 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {API_BASE_URL} from '../../utils/API_CONFIG';
+import {API_BASE_URL, API_KEY} from '../../utils/API_CONFIG';
 
 
 export const fetchBroadcast = createAsyncThunk(
     'broadcasts/fetchBroadcast',
-    async function (citiesGeopositions, {rejectWithValue, getState}) {
+    async function (citiesGeopositions, {rejectWithValue}) {
 
-        const urls = citiesGeopositions.map(geoposition => fetch(`${API_BASE_URL}data/2.5/weather?lat=${geoposition.lat}&lon=${geoposition.lon}&units=metric&appid=ba63aad5cef0cee38d4091641a095fbe`))
+        const urls = citiesGeopositions.map(geoposition => fetch(`${API_BASE_URL}data/2.5/weather?lat=${geoposition.lat}&lon=${geoposition.lon}&units=metric&appid=${API_KEY}`))
 
         try {
             const responses = await Promise.all(urls);
             const data = await Promise.all(responses.map(resp => resp.json()));
-            return data
+            return data;
         } catch (error) {
-            return rejectWithValue('Server Error!');
+            return rejectWithValue(error.message);
         }
     },
     {
@@ -38,15 +38,13 @@ export const fetchBroadcast = createAsyncThunk(
 //             return rejectWithValue('Server Error!');
 //         }
 //     },
-    // {
-    //     condition: (_, {getState}) => {
-    //         const {generalBroadcast} = getState();
-    //         if (generalBroadcast.status === 'loading') return false;
-    //     }
-    // }
+// {
+//     condition: (_, {getState}) => {
+//         const {generalBroadcast} = getState();
+//         if (generalBroadcast.status === 'loading') return false;
+//     }
+// }
 // )
-
-
 
 
 export const generalBroadcastSlice = createSlice({
@@ -55,13 +53,12 @@ export const generalBroadcastSlice = createSlice({
     initialState: {
         broadcasts: [],
         broadcastStatus: null,
-        broadcastError: null,
     },
 
     extraReducers: builder => {
         builder
             .addCase(fetchBroadcast.pending, (state) => {
-                state.broadcastStatus = 'loading'
+                state.broadcastStatus = 'loading';
             })
 
             .addCase(fetchBroadcast.fulfilled, (state, action) => {
@@ -69,9 +66,8 @@ export const generalBroadcastSlice = createSlice({
                 state.broadcasts = action.payload;
             })
 
-            .addCase(fetchBroadcast.rejected, (state, action) => {
+            .addCase(fetchBroadcast.rejected, (state) => {
                 state.broadcastStatus = 'rejected';
-                state.broadcastError = action.payload;
             })
     }
 });

@@ -1,0 +1,21 @@
+.cardHeader {
+    background-color: #464e5b;
+    border-bottom: 1px solid #c5d7f1;
+    color: #c5d7f1;
+    font-size: 18px;
+    font-weight: bolder;
+}
+
+.card-body {
+    background-color: #30363e;
+    color: white;
+}
+
+.card-text {
+    border-bottom: 1px solid #c5d7f1;
+    font-size: 18px;
+}
+
+li::marker {
+    color: #f55f5f;
+}

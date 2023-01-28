@@ -1,0 +1,26 @@
+.form-control, .form-control:active, .form-control:hover, .form-control:focus-within {
+    background-color: #3a424b;
+    color: white;
+}
+
+.form-control:focus {
+    background-color: #464e5b;
+    box-shadow: none;
+}
+
+.input-group-text {
+    background-color: #f5b71b;
+}
+
+.loader {
+    width: 160px;
+    height: 160px;
+}
+
+.errorText {
+    font-size: 20px;
+}
+
+.search-tip {
+    font-size: 18px;
+}

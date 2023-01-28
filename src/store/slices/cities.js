@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {API_BASE_URL} from '../../utils/API_CONFIG';
+import {API_BASE_URL, API_KEY} from '../../utils/API_CONFIG';
+import {setCitiesGeoposition} from '../../utils/Storage';
 
 export const fetchCitiesGeoposition = createAsyncThunk(
     'cities/fetchCitiesGeoposition',
@@ -8,11 +9,15 @@ export const fetchCitiesGeoposition = createAsyncThunk(
         dispatch(addCity(currentCity));
 
         try {
-            const response = await fetch(`${API_BASE_URL}geo/1.0/direct?q=${currentCity}&limit=5&appid=ba63aad5cef0cee38d4091641a095fbe`);
-            const data = await response.json();
-            return data
+            const response = await fetch(`${API_BASE_URL}geo/1.0/direct?q=${currentCity}&limit=5&appid=${API_KEY}`);
+            if (!response.ok) return rejectWithValue(response.ok);
+            else {
+                const data = await response.json();
+                return data
+            }
+
         } catch (error) {
-            return rejectWithValue('Server Error!');
+            return rejectWithValue(error.message);
         }
     },
     {
@@ -30,17 +35,21 @@ export const citiesSlice = createSlice({
     initialState: {
         citiesList: [],
         citiesGeopositions: [],
-        citiesStatus: null,
-        citiesError: null
+        citiesStatus: null
     },
 
     reducers: {
         addCity: (state, action) => {
             if (!action.payload.trim()) return false;
             else state.citiesList.push(action.payload);
+        },
+
+        addCitiesGeopositions: (state, action) => {
+            if (state.citiesGeopositions.length > 0) return;
+            console.log(action.payload)
+            state.citiesGeopositions = action.payload;
         }
     },
-
 
     extraReducers: builder => {
         builder
@@ -52,7 +61,6 @@ export const citiesSlice = createSlice({
                 state.citiesStatus = 'resolved';
 
                 action.payload.forEach((item) => {
-                    console.log(action.payload)
                     let geoData = {};
                     geoData.lon = item.lon;
                     geoData.lat = item.lat;
@@ -60,15 +68,15 @@ export const citiesSlice = createSlice({
                     geoData.state = item.state;
                     geoData.country = item.country;
                     state.citiesGeopositions.push(geoData);
+                    setCitiesGeoposition(geoData);
                 })
             })
 
-            .addCase(fetchCitiesGeoposition.rejected, (state, action) => {
+            .addCase(fetchCitiesGeoposition.rejected, (state) => {
                 state.citiesStatus = 'rejected';
-                state.citiesError = action.payload;
             })
     }
 });
 
-const {addCity} = citiesSlice.actions;
+export const {addCity, addCitiesGeopositions} = citiesSlice.actions;
 export default citiesSlice.reducer;
