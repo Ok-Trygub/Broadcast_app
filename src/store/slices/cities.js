@@ -35,7 +35,8 @@ export const citiesSlice = createSlice({
     initialState: {
         citiesList: [],
         citiesGeopositions: [],
-        citiesStatus: null
+        citiesStatus: null,
+        cityGeoDataId: 0
     },
 
     reducers: {
@@ -60,12 +61,14 @@ export const citiesSlice = createSlice({
                 state.citiesStatus = 'resolved';
 
                 action.payload.forEach((item) => {
+                    state.cityGeoDataId = state.cityGeoDataId + 1;
                     let geoData = {};
                     geoData.lon = item.lon;
                     geoData.lat = item.lat;
                     geoData.name = item.name;
                     geoData.state = item.state;
                     geoData.country = item.country;
+                    geoData.cityGeoDataId = state.cityGeoDataId;
                     state.citiesGeopositions.push(geoData);
                     setCitiesGeoposition(geoData);
                 })
