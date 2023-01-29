@@ -6,7 +6,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import BroadcastCard from '../../components/BroadcastCard/BroadcastCard';
 import {fetchCitiesGeoposition} from '../../store/slices/cities';
 import {fetchBroadcast} from "../../store/slices/generalBroadcast";
-import {getCitiesGeoposition} from "../../utils/Storage";
+import {getCitiesGeoposition} from "../../functions/Storage";
 import {addCitiesGeopositions} from '../../store/slices/cities'
 import './MainPage.css';
 import Search from "../../assets/icons/Search";
@@ -14,7 +14,7 @@ import Loader from "../../components/Loader/Loader";
 
 const MainPage = () => {
     const dispatch = useDispatch();
-    const {broadcasts, broadcastStatus} = useSelector(state => state.broadcasts);
+    const {broadcasts, broadcastsStatus} = useSelector(state => state.broadcasts);
     const {citiesStatus} = useSelector(state => state.cities);
     const {citiesGeopositions} = useSelector(state => state.cities);
     const [currentCity, setCurrentCity] = useState('');
@@ -23,7 +23,7 @@ const MainPage = () => {
     useEffect(() => {
         const dataFromStorage = getCitiesGeoposition();
 
-        if (!dataFromStorage) return;
+        if (citiesGeopositions.length || !dataFromStorage) return;
         dispatch(addCitiesGeopositions(dataFromStorage));
     }, [dispatch])
 
@@ -56,17 +56,19 @@ const MainPage = () => {
                         <InputGroup.Text onClick={searchHandle}><Search/></InputGroup.Text>
                     </InputGroup>
 
-                    {!broadcastStatus &&
-                        <p className='text-white search-tip'>Input in the search field the name of the city which weather forecast
-                            you would like to receive. <br/> For example: <b>"Odesa"</b>. <br/> <br/>You can specify the city not only in English.
+                    {!broadcastsStatus &&
+                        <p className='text-white search-tip'>Input in the search field the name of the city which
+                            weather forecast
+                            you would like to receive. <br/> For example: <b>"Odesa"</b>. <br/> <br/>You can specify the
+                            city not only in English.
                             <br/>The search is also carried out by state code
                             and country code.</p>
                     }
                 </Col>
             </Row>
 
-            {broadcastStatus === 'loading' && <div className='mx-auto mt-6 loader'><Loader/></div>}
-            {broadcastStatus === 'resolved' &&
+            {broadcastsStatus === 'loading' && <div className='mx-auto mt-6 loader'><Loader/></div>}
+            {broadcastsStatus === 'resolved' &&
                 <Row>
                     {broadcasts.map((broadcast, index) => (
                         <BroadcastCard
@@ -77,7 +79,7 @@ const MainPage = () => {
                 </Row>
             }
 
-            {broadcastStatus === 'rejected' &&
+            {broadcastsStatus === 'rejected' &&
                 <p className='text-white text-center errorText'>The error is occurred. Please try again.</p>}
             {citiesStatus === 'rejected' &&
                 <p className='text-white text-center errorText'>Something went wrong... Please try again.</p>}

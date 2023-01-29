@@ -19,55 +19,74 @@ export const fetchBroadcast = createAsyncThunk(
     {
         condition: (_, {getState}) => {
             const {broadcasts} = getState();
-            if (broadcasts.status === 'loading') return false;
+            if (broadcasts.broadcastsStatus === 'loading') return false;
         }
     }
 )
 
 
-// export const fetchCurrentBroadcast = createAsyncThunk(
-//     'broadcasts/fetchCurrentBroadcast',
-//     async function (_, {rejectWithValue}) {
-//
-//
-//         try {
-//             const data = 'aaa'
-//             console.log(data)
-//             return data
-//         } catch (error) {
-//             return rejectWithValue('Server Error!');
-//         }
-//     },
-// {
-//     condition: (_, {getState}) => {
-//         const {generalBroadcast} = getState();
-//         if (generalBroadcast.status === 'loading') return false;
-//     }
-// }
-// )
+export const fetchCurrentBroadcast = createAsyncThunk(
+    'broadcasts/fetchCurrentBroadcast',
+    async function (geoposition, {rejectWithValue, getState}) {
 
+        const existingBroadcastsArr = getState().broadcasts.broadcasts;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}data/2.5/weather?lat=${geoposition.lat}&lon=${geoposition.lon}&units=metric&appid=${API_KEY}`);
+            if (!response.ok) return rejectWithValue(response.ok);
+            else {
+                const data = await response.json();
+
+                return existingBroadcastsArr.map(broadcast => {
+
+                    if (broadcast.id === data.id) {
+                        broadcast = data;
+                        broadcast.test = 'test!!!!!!!!!!!!'
+                    }
+                    return broadcast;
+                });
+            }
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+)
 
 export const generalBroadcastSlice = createSlice({
     name: 'broadcasts',
 
     initialState: {
         broadcasts: [],
-        broadcastStatus: null,
+        broadcastsStatus: null,
+        currentBroadcastStatus: null,
     },
 
     extraReducers: builder => {
         builder
             .addCase(fetchBroadcast.pending, (state) => {
-                state.broadcastStatus = 'loading';
+                state.broadcastsStatus = 'loading';
             })
 
             .addCase(fetchBroadcast.fulfilled, (state, action) => {
-                state.broadcastStatus = 'resolved';
+                state.broadcastsStatus = 'resolved';
                 state.broadcasts = action.payload;
             })
 
             .addCase(fetchBroadcast.rejected, (state) => {
-                state.broadcastStatus = 'rejected';
+                state.broadcastsStatus = 'rejected';
+            })
+
+            .addCase(fetchCurrentBroadcast.pending, (state) => {
+                state.currentBroadcastStatus = 'loading';
+            })
+
+            .addCase(fetchCurrentBroadcast.fulfilled, (state, {payload}) => {
+                state.currentBroadcastStatus = 'resolved';
+                state.broadcasts = payload;
+            })
+
+            .addCase(fetchCurrentBroadcast.rejected, (state) => {
+                state.currentBroadcastStatus = 'rejected';
             })
     }
 });

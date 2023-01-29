@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {API_BASE_URL, API_KEY} from '../../utils/API_CONFIG';
-import {setCitiesGeoposition} from '../../utils/Storage';
+import {setCitiesGeoposition} from '../../functions/Storage';
 
 export const fetchCitiesGeoposition = createAsyncThunk(
     'cities/fetchCitiesGeoposition',
@@ -23,7 +23,7 @@ export const fetchCitiesGeoposition = createAsyncThunk(
     {
         condition: (_, {getState}) => {
             const {cities} = getState();
-            if (cities.status === 'loading') return false;
+            if (cities.citiesStatus === 'loading') return false;
         }
     }
 )
@@ -46,7 +46,6 @@ export const citiesSlice = createSlice({
 
         addCitiesGeopositions: (state, action) => {
             if (state.citiesGeopositions.length > 0) return;
-            console.log(action.payload)
             state.citiesGeopositions = action.payload;
         }
     },
