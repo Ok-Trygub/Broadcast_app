@@ -8,10 +8,7 @@ import './BroadcastCard.css';
 import Loader from "../Loader/Loader";
 
 
-const BroadcastCard = (props) => {
-    const {broadcast} = props;
-    // console.log(broadcast)
-
+const BroadcastCard = ({broadcast}) => {
     const dispatch = useDispatch();
     const {citiesGeopositions} = useSelector(state => state.cities);
     const {currentBroadcastStatus} = useSelector(state => state.broadcasts);
@@ -41,7 +38,7 @@ const BroadcastCard = (props) => {
                 <Card.Header
                     className='cardHeader'>{currentCityGeoData.name}, {currentCityGeoData.state} {currentCityGeoData.state ? ',' : null} {currentCityGeoData.country}</Card.Header>
 
-                {currentBroadcastStatus === 'loading' && update === true ?
+                {currentBroadcastStatus === 'loading' && update ?
                     renderLoader()
                     :
                     <Card.Body>
@@ -50,10 +47,9 @@ const BroadcastCard = (props) => {
                             <li className='pb-1'>Temperature: <span
                                 className='weight-bold'>{broadcast.main.temp} ℃</span></li>
                             <li>Feels like: <span className='weight-bold'>{broadcast.main.feels_like} ℃</span></li>
-                            {broadcast.test ?
-                                <li>Test: <span className='weight-bold'>{broadcast.test} ℃</span></li> : null}
-
                         </ul>
+                        {broadcast.isUpdated &&
+                            <p className='weight-bold pb-2'>Broadcast was updated</p>}
                         <Button variant="warning" className='weight-bold' onClick={updateBroadcast}>Update</Button>
                     </Card.Body>
                 }

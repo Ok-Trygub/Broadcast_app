@@ -41,7 +41,7 @@ export const fetchCurrentBroadcast = createAsyncThunk(
 
                     if (broadcast.id === data.id) {
                         broadcast = data;
-                        broadcast.test = 'test!!!!!!!!!!!!'
+                        broadcast.isUpdated = true;
                     }
                     return broadcast;
                 });
